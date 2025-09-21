@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة فعالية - جمعية سواعد شباب ليبيا الخيرية</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <h1>إضافة فعالية جديدة</h1>
+            <nav>
+                <a href="/dashboard" class="nav-link">لوحة التحكم</a>
+                <a href="/dashboard/add-event" class="nav-link active">إضافة فعالية</a>
+                <a href="/dashboard/add-partner" class="nav-link">إضافة شريك</a>
+                <a href="/" class="nav-link">عرض الموقع</a>
+                <a href="/login" class="nav-link">تسجيل الخروج</a>
+            </nav>
+        </header>
+
+        <main class="add-event-main">
+            <div class="event-form-container">
+                <h2>✨ إنشاء فعالية جديدة</h2>
+                <form action="/dashboard/add-event" method="POST" enctype="multipart/form-data" class="event-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title">🎯 عنوان الفعالية:</label>
+                            <input type="text" id="title" name="title" required placeholder="أدخل عنوان الفعالية">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="date">📅 تاريخ الفعالية:</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">📝 الوصف:</label>
+                        <textarea id="description" name="description" rows="5" required placeholder="اكتب وصفاً للفعالية الخيرية..."></textarea>
+                        <div class="form-help">أخبر الناس عن هذه الفعالية وكيف ستساعد المجتمع</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">📍 الموقع:</label>
+                            <input type="text" id="location" name="location" placeholder="موقع الفعالية">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="people_helped">👥 عدد المستفيدين:</label>
+                            <input type="number" id="people_helped" name="people_helped" min="0" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">💰 الميزانية (اختياري):</label>
+                        <input type="number" id="budget" name="budget" min="0" step="0.01" placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="images">📸 صورة للفعالية :</label>
+                        <input type="file" id="images" name="images" multiple accept="image/*" class="file-input">
+                        <div class="form-help">اختر صورة لتمثيل هذه الفعالية (JPG, PNG, GIF)</div>
+                        <div id="image-preview" class="image-preview-container"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="partners">🤝 الشركاء والمتعاونون:</label>
+                        <textarea id="partners" name="partners" rows="3" placeholder="اذكر أسماء الشركاء والمتعاونين في هذه الفعالية..."></textarea>
+                        <div class="form-help">أضف أسماء الجمعيات أو المؤسسات الشريكة في تنظيم هذه الفعالية</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">
+                            <span>✨</span>
+                            إنشاء الفعالية
+                        </button>
+                        <a href="/dashboard" class="cancel-btn">
+                            <span>❌</span>
+                            إلغاء
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageInput = document.getElementById('images');
+            const previewContainer = document.getElementById('image-preview');
+            const maxImages = 10;
+
+            imageInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                
+                // Clear previous previews
+                previewContainer.innerHTML = '';
+                
+                // Check if too many files selected
+                if (files.length > maxImages) {
+                    alert(`يمكنك اختيار حتى ${maxImages} صور فقط`);
+                    e.target.value = '';
+                    return;
+                }
+                
+                // Create preview for each image
+                files.forEach((file, index) => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const previewItem = document.createElement('div');
+                            previewItem.className = 'image-preview-item';
+                            previewItem.innerHTML = `
+                                <img src="${e.target.result}" alt="معاينة الصورة ${index + 1}">
+                                <div class="image-info">
+                                    <span class="image-name">${file.name}</span>
+                                    <span class="image-size">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                                </div>
+                                <button type="button" class="remove-image" data-index="${index}">×</button>
+                            `;
+                            previewContainer.appendChild(previewItem);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                });
+                
+                // Add remove functionality
+                setTimeout(() => {
+                    const removeButtons = previewContainer.querySelectorAll('.remove-image');
+                    removeButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            const index = parseInt(this.dataset.index);
+                            const dt = new DataTransfer();
+                            
+                            // Rebuild file list without the removed file
+                            Array.from(imageInput.files).forEach((file, i) => {
+                                if (i !== index) {
+                                    dt.items.add(file);
+                                }
+                            });
+                            
+                            imageInput.files = dt.files;
+                            
+                            // Trigger change event to refresh preview
+                            imageInput.dispatchEvent(new Event('change'));
+                        });
+                    });
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

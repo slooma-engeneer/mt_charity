@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تفاصيل الفعالية - جمعية سواعد شباب ليبيا الخيرية</title>
+  <!-- <link rel="stylesheet" href="/styles.css"> -->
+  <link rel="stylesheet" href="/styles.css">
+   <style>
+
+   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <div class="logo">جمعية سواعد شباب ليبيا 💙</div>
+      <ul>
+        <li><a href="/">الرئيسية</a></li>
+        <li><a href="/#activities">المشاريع والأنشطة</a></li>
+        <li><a href="/#partner-organizations">شركائنا</a></li>
+        <li><a href="/#about">من نحن</a></li>
+        <li><a href="/login">لوحة التحكم</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div id="d"></div>
+  <main class="event-detail-main">
+    <div class="container">
+      <div class="loading-container" id="loading">
+        <!-- <div class="loading"></div>
+        <p>جاري تحميل تفاصيل الفعالية...</p> -->
+      </div>
+
+      <div class="event-detail-container hidden" id="eventDetail">
+        <div class="event-hero">
+          <div class="event-hero-content">
+            <h1 id="eventTitle" class="event-title"></h1>
+            <p class="event-intro">هنا تجد جميع التفاصيل الخاصة بهذه الفعالية الخيرية التي نظمتها الجمعية 🌟</p>
+            <div class="event-meta">
+              <div class="meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span id="eventDate"></span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="eventLocation"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="event-content">
+          <div class="content-grid">
+            <div class="main-content">
+              <div class="event-images-section" id="eventImagesSection">
+                <h2 class="section-title">
+                  <i class="fas fa-images"></i>
+                  صور الفعالية
+                </h2>
+                <div class="event-images" id="eventImages"></div>
+              </div>
+
+              <div class="event-description-section">
+                <h2 class="section-title">
+                  <i class="fas fa-file-alt"></i>
+                  وصف الفعالية
+                </h2>
+                <div class="description-card">
+                  <p class="event-description" id="eventDescription"></p>
+                </div>
+              </div>
+
+              <div class="partners-section hidden" id="partnersSection">
+                <h2 class="section-title">
+                  <i class="fas fa-handshake"></i>
+                  الشركاء والمتعاونون
+                </h2>
+                <div class="partners-card">
+                  <div class="partner-tags" id="eventPartners"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="sidebar-content">
+              <div class="stats-card">
+                <h3 class="card-title">
+                  <i class="fas fa-chart-bar"></i>
+                  إحصائيات الفعالية
+                </h3>
+                <div class="stats-grid">
+                  <div class="stat-item">
+                    <div class="stat-icon">
+                      <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                      <span class="stat-label">المستفيدون</span>
+                      <span class="stat-value" id="eventPeopleHelped"></span>
+                    </div>
+                  </div>
+                  <div class="stat-item">
+                    <div class="stat-icon">
+                      <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-info">
+                      <span class="stat-label">الميزانية</span>
+                      <span class="stat-value" id="eventBudget"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <h3 class="card-title">
+                  <i class="fas fa-info-circle"></i>
+                  معلومات إضافية
+                </h3>
+                <div class="info-content">
+                  <p class="added-by">
+                    <i class="fas fa-user-plus"></i>
+                    تم الإضافة بواسطة: <span id="eventAddedBy"></span>
+                  </p>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+
+        <div class="event-actions">
+          <div class="actions-container">
+            <a href="/" class="action-btn primary">
+              <i class="fas fa-home"></i>
+              العودة للرئيسية
+            </a>
+            <a href="/#activities" class="action-btn secondary">
+              <i class="fas fa-list"></i>
+              عرض جميع الأنشطة
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="error-container hidden" id="errorContainer">
+        <div class="error-card">
+          <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h3>خطأ في تحميل الفعالية</h3>
+          <p id="errorMessage">لم يتم العثور على الفعالية المطلوبة</p>
+          <a href="/" class="action-btn primary">العودة للرئيسية</a>
+        </div>
+      </div> -->
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const eventId = window.location.pathname.split('/').pop();
+      if (!eventId) {
+        showError('معرف الفعالية غير صحيح');
+        return;
+      }
+      loadEventDetails(eventId);
+    });
+
+    async function loadEventDetails(eventId) {
+      try {
+        const response = await fetch(`/api/public/event/${eventId}`);
+        if (!response.ok) throw new Error(response.status === 404 ? 'لم يتم العثور على الفعالية المطلوبة' : 'فشل في تحميل تفاصيل الفعالية');
+        const event = await response.json();
+        displayEventDetails(event);
+      } catch (error) {
+        showError(error.message);
+      }
+    }
+
+    function displayEventDetails(event) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('eventDetail').classList.remove('hidden');
+
+      document.getElementById('eventTitle').textContent = event.title;
+      document.getElementById('eventDate').textContent = new Date(event.date).toLocaleDateString('ar-SA');
+      document.getElementById('eventLocation').textContent = event.location;
+      document.getElementById('eventDescription').textContent = event.description;
+      document.getElementById('eventPeopleHelped').textContent = event.people_helped.toLocaleString('ar-SA');
+      document.getElementById('eventBudget').textContent = event.budget > 0 ? `${event.budget.toLocaleString('ar-SA')} ريال` : 'غير محدد';
+      document.getElementById('eventAddedBy').textContent = event.added_by;
+
+      if (event.partners && event.partners.trim()) {
+        document.getElementById('eventPartners').textContent = event.partners;
+        document.getElementById('partnersSection').classList.remove('hidden');
+      }
+
+      displayEventImages(event.images || []);
+    }
+
+    function displayEventImages(images) {
+      const container = document.getElementById('eventImages');
+      if (!images.length) {
+        container.innerHTML = '<div class="no-images">📷 لا توجد صور لهذه الفعالية</div>';
+        return;
+      }
+      container.innerHTML = `
+        <div class="images-grid">
+          ${images.map(img => `
+            <div class="event-image-item">
+              <img src="${img.path}" alt="${img.originalname}" onclick="openImageModal('${img.path}', '${img.originalname}')">
+              
+            </div>
+          `).join('')}
+        </div>`;
+    }
+
+    function openImageModal(imagePath, imageName) {
+      const modal = document.createElement('div');
+      modal.className = 'image-modal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <span class="close-modal" onclick="closeImageModal()">&times;</span>
+          <img src="${imagePath}" alt="${imageName}">
+          <div class="modal-caption">${imageName}</div>
+        </div>`;
+      document.body.appendChild(modal);
+      modal.style.display = 'flex';
+    }
+
+    function closeImageModal() {
+      const modal = document.querySelector('.image-modal');
+      if (modal) modal.remove();
+    }
+
+    function showError(message) {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('errorMessage').textContent = message;
+      document.getElementById('errorContainer').classList.remove('hidden');
+    }
+  </script>
+</body>
+
+</html>

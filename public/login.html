@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - جمعية سواعد شباب ليبيا الخيرية</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <form class="login-form" action="/login" method="POST">
+            <h2>تسجيل الدخول 🔐</h2>
+            
+            <div class="form-group">
+                <label for="username">اسم المستخدم:</label>
+                <input type="text" id="username" name="username" required placeholder="أدخل اسم المستخدم">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">كلمة المرور:</label>
+                <input type="password" id="password" name="password" required placeholder="أدخل كلمة المرور">
+            </div>
+            
+            <button type="submit" class="login-btn">دخول 🚀</button>
+            
+            <!-- Error Messages -->
+            <div id="errorMessage" class="error-message" style="display: none;">
+                <p id="errorText"></p>
+            </div>
+            
+            <!-- Success Messages -->
+            <div id="successMessage" class="success-message" style="display: none;">
+                <p id="successText"></p>
+            </div>
+            
+        </form>
+        
+        <a href="/" class="back-link">← العودة للصفحة الرئيسية</a>
+    </div>
+
+    <script>
+        // Handle URL parameters for error and success messages
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        const message = urlParams.get('message');
+
+        const errorDiv = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const successDiv = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+
+        // Error messages
+        const errorMessages = {
+            'missing_fields': 'يرجى إدخال اسم المستخدم وكلمة المرور',
+            'invalid_credentials': 'اسم المستخدم أو كلمة المرور غير صحيحة',
+            'server_error': 'حدث خطأ في الخادم، يرجى المحاولة مرة أخرى',
+            'unauthorized': 'يجب تسجيل الدخول للوصول إلى هذه الصفحة'
+        };
+
+        // Success messages
+        const successMessages = {
+            'logged_out': 'تم تسجيل الخروج بنجاح'
+        };
+
+        if (error && errorMessages[error]) {
+            errorText.textContent = '❌ ' + errorMessages[error];
+            errorDiv.style.display = 'block';
+        }
+
+        if (message && successMessages[message]) {
+            successText.textContent = '✅ ' + successMessages[message];
+            successDiv.style.display = 'block';
+        }
+
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            if (errorDiv.style.display === 'block') {
+                errorDiv.style.display = 'none';
+            }
+            if (successDiv.style.display === 'block') {
+                successDiv.style.display = 'none';
+            }
+        }, 5000);
+
+        // Form validation
+        document.querySelector('.login-form').addEventListener('submit', function(e) {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                e.preventDefault();
+                errorText.textContent = '❌ يرجى إدخال اسم المستخدم وكلمة المرور';
+                errorDiv.style.display = 'block';
+                return false;
+            }
+
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<span class="loading"></span> جاري تسجيل الدخول...';
+            submitBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>

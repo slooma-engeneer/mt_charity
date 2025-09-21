@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - جمعية الأمل الخيرية</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <h1>لوحة التحكم 📊</h1>
+            <nav>
+                <a href="/dashboard" class="nav-link active">لوحة التحكم</a>
+                <a href="/dashboard/add-event" class="nav-link">إضافة فعالية</a>
+                <a href="/dashboard/add-partner" class="nav-link">إضافة شريك</a>
+                <a href="/" class="nav-link">عرض الموقع</a>
+                <a href="/login/logout" class="nav-link" onclick="return confirmLogout()">تسجيل الخروج</a>
+            </nav>
+        </header>
+
+        <main class="dashboard-main">
+            <!-- إحصائيات سريعة -->
+            <section class="dashboard-stats">
+                <div class="stat-card">
+                    <h3>إجمالي الفعاليات</h3>
+                    <div class="stat-number">24</div>
+                    <p>فعالية خيرية</p>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>المستفيدون</h3>
+                    <div class="stat-number">1,250</div>
+                    <p>شخص استفاد</p>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>المتطوعون</h3>
+                    <div class="stat-number">85</div>
+                    <p>متطوع نشط</p>
+                </div>
+            </section>
+
+            <!-- الأنشطة الحديثة -->
+            <section class="recent-activities">
+                <h2>الأنشطة الحديثة 📋</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <h4>توزيع الوجبات الغذائية 🍽️</h4>
+                        <p>تم توزيع 200 وجبة ساخنة على الأسر المحتاجة في حي الزهراء. شارك في هذه الفعالية 15 متطوع.</p>
+                        <span class="activity-date">15 ديسمبر 2023</span>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <h4>حملة كسوة الشتاء ❄️</h4>
+                        <p>توزيع 150 قطعة ملابس شتوية و 80 بطانية على الأطفال والعائلات المحتاجة استعداداً لفصل الشتاء.</p>
+                        <span class="activity-date">1 ديسمبر 2023</span>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <h4>برنامج الدعم التعليمي 📚</h4>
+                        <p>توزيع 100 حقيبة مدرسية مع الكتب والأدوات على الطلاب المحتاجين، بالإضافة إلى تسجيل 50 طالب في برنامج التقوية.</p>
+                        <span class="activity-date">20 نوفمبر 2023</span>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <h4>القافلة الطبية المجانية 🏥</h4>
+                        <p>فحص طبي مجاني لـ 180 مريض مع توزيع الأدوية الأساسية. شارك في القافلة 8 أطباء و 12 ممرض.</p>
+                        <span class="activity-date">10 نوفمبر 2023</span>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <h4>يوم ترفيهي للأيتام 👶</h4>
+                        <p>تنظيم يوم ترفيهي لـ 60 طفل يتيم شمل الألعاب والهدايا والوجبات، مع توزيع ملابس جديدة لكل طفل.</p>
+                        <span class="activity-date">5 نوفمبر 2023</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- رسائل النجاح -->
+            <div class="success-message" style="display: none;" id="successMessage">
+                <p>✅ تم حفظ البيانات بنجاح!</p>
+            </div>
+            <div class="success-message" style="display: none;" id="partnerSuccessMessage">
+                <p>🤝 تم إضافة الشريك بنجاح!</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Handle URL parameters for success messages
+        const urlParams = new URLSearchParams(window.location.search);
+        const success = urlParams.get('success');
+
+        const successMessages = {
+            'event_added': '✅ تم إضافة الفعالية بنجاح!',
+            'partner_added': '🤝 تم إضافة الشريك بنجاح!'
+        };
+
+        if (success && successMessages[success]) {
+            const messageDiv = success === 'event_added' ?
+                document.getElementById('successMessage') :
+                document.getElementById('partnerSuccessMessage');
+            
+            if (messageDiv) {
+                messageDiv.querySelector('p').textContent = successMessages[success];
+                messageDiv.style.display = 'block';
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Load dynamic statistics
+        async function loadStatistics() {
+            try {
+                const response = await fetch('/dashboard/api/stats');
+                const stats = await response.json();
+                
+                // Update statistics cards
+                const statCards = document.querySelectorAll('.stat-card');
+                if (statCards.length >= 3) {
+                    statCards[0].querySelector('.stat-number').textContent = stats.totalEvents;
+                    statCards[1].querySelector('.stat-number').textContent = stats.totalPeopleHelped;
+                    statCards[2].querySelector('.stat-number').textContent = '85'; // Keep volunteers static for now
+                }
+
+                // Update recent activities
+                if (stats.recentEvents && stats.recentEvents.length > 0) {
+                    updateRecentActivities(stats.recentEvents);
+                }
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        // Update recent activities with real data
+        function updateRecentActivities(events) {
+            const activityList = document.querySelector('.activity-list');
+            if (!activityList || events.length === 0) return;
+
+            // Clear existing activities and add real ones
+            activityList.innerHTML = '';
+            
+            events.slice(0, 5).forEach((event, index) => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
+                
+                const date = new Date(event.date).toLocaleDateString('ar-SA', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                activityItem.innerHTML = `
+                    <h4>${event.title} 🎯</h4>
+                    <p>${event.description}</p>
+                    <span class="activity-date">${date}</span>
+                    <div class="activity-actions">
+                        <a href="/dashboard/event/${event.id}" class="view-event-btn">عرض التفاصيل</a>
+                    </div>
+                `;
+                
+                // Make the entire item clickable
+                activityItem.style.cursor = 'pointer';
+                activityItem.addEventListener('click', function(e) {
+                    // Don't navigate if clicking on the button
+                    if (!e.target.classList.contains('view-event-btn')) {
+                        window.location.href = `/dashboard/event/${event.id}`;
+                    }
+                });
+                
+                activityList.appendChild(activityItem);
+            });
+        }
+
+        // Logout confirmation
+        function confirmLogout() {
+            return confirm('هل أنت متأكد من تسجيل الخروج؟');
+        }
+
+        // Load statistics when page loads
+        document.addEventListener('DOMContentLoaded', loadStatistics);
+
+        // إضافة تأثيرات تفاعلية
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // تحديث الوقت الحالي
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // يمكن إضافة عنصر لعرض الوقت إذا أردت
+            console.log('الوقت الحالي:', timeString);
+        }
+
+        // تحديث الوقت كل دقيقة
+        setInterval(updateTime, 60000);
+        updateTime(); // تشغيل فوري
+
+        // إضافة تأثيرات على الأزرار
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // إضافة تأثير النقر
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+
+        // إضافة تأثير التحميل للنماذج
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function() {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<span class="loading"></span> جاري الحفظ...';
+                    submitBtn.disabled = true;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

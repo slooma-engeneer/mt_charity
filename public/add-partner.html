@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة شريك - جمعية سواعد شباب ليبيا الخيرية</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <h1>إضافة شريك جديد</h1>
+            <nav>
+                <a href="/dashboard" class="nav-link">لوحة التحكم</a>
+                <a href="/dashboard/add-event" class="nav-link">إضافة فعالية</a>
+                <a href="/dashboard/add-partner" class="nav-link active">إضافة شريك</a>
+                <a href="/" class="nav-link">عرض الموقع</a>
+                <a href="/login" class="nav-link">تسجيل الخروج</a>
+            </nav>
+        </header>
+
+        <main class="add-event-main">
+            <div class="event-form-container">
+                <h2>🤝 إضافة منظمة شريكة جديدة</h2>
+                <form action="/dashboard/add-partner" method="POST" class="event-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">🏢 اسم المنظمة:</label>
+                            <input type="text" id="name" name="name" required placeholder="أدخل اسم المنظمة الشريكة">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="type">🏷️ نوع المنظمة:</label>
+                            <select id="type" name="type" required>
+                                <option value="">اختر نوع المنظمة</option>
+                                <option value="charity">جمعية خيرية</option>
+                                <option value="government">مؤسسة حكومية</option>
+                                <option value="government">منظمة حكومية</option>
+                                <option value="government">منظمة غير حكومية</option>
+                                <option value="private">شركة خاصة</option>
+                                <option value="international">منظمة دولية</option>
+                                <option value="foundation">مؤسسة</option>
+                                <option value="ngo">منظمة غير ربحية</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">📝 وصف المنظمة:</label>
+                        <textarea id="description" name="description" rows="4" required placeholder="اكتب وصفاً مختصراً عن المنظمة ونشاطها..."></textarea>
+                        <div class="form-help">أخبرنا عن المنظمة وكيف تساعد الجمعيات الخيرية</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">📞 رقم الهاتف:</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+966 XX XXX XXXX">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">📧 البريد الإلكتروني:</label>
+                            <input type="email" id="email" name="email" placeholder="info@organization.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="website">🌐 الموقع الإلكتروني:</label>
+                            <input type="url" id="website" name="website" placeholder="https://www.organization.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">📍 الموقع:</label>
+                            <input type="text" id="location" name="location" placeholder="المدينة، المنطقة">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="services">🎯 الخدمات المقدمة:</label>
+                        <textarea id="services" name="services" rows="3" placeholder="اذكر الخدمات التي تقدمها المنظمة للجمعيات الخيرية..."></textarea>
+                        <div class="form-help">مثل: دعم مالي، دعم لوجستي، تدريب، استشارة</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contact_person">👤 الشخص المسؤول:</label>
+                            <input type="text" id="contact_person" name="contact_person" placeholder="اسم الشخص المسؤول">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact_position">💼 المنصب:</label>
+                            <input type="text" id="contact_position" name="contact_position" placeholder="منصب الشخص المسؤول">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">📋 ملاحظات إضافية:</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="أي ملاحظات أو معلومات إضافية..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">
+                            <span>🤝</span>
+                            إضافة الشريك
+                        </button>
+                        <a href="/dashboard" class="cancel-btn">
+                            <span>❌</span>
+                            إلغاء
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
